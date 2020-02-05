@@ -1,6 +1,6 @@
 FROM golang
 
-# Install kubectl, gcloud
+# Install kubectl, google-cloud-sdk
 RUN apt-get update && \
     apt-get install -y apt-transport-https && \
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
@@ -12,7 +12,8 @@ RUN apt-get update && \
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
     apt-get update && \
-    apt-get install -y google-cloud-sdk
+    apt-get install -y google-cloud-sdk && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install ko
 RUN GO111MODULE=on go get github.com/google/ko/cmd/ko

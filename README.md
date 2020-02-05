@@ -4,13 +4,23 @@ An image to build go programs and deploy them in Kubernetes
 
 ## On Google Cloud GKE
 
-- define the `PROJECT` variable with the name of your project:
+- define the `PROJECT` variable with the name of your Google Cloud project:
 
   ```sh
   $ PROJECT=my-project
   ```
 
-- Edit the manifest `ko-builder.yaml` to change the value of the `REPOSITORY` environment variable with the repository you want to build from.
+- Build the Docker image and push it to the registry of your project:
+
+  ```sh
+  $ docker build . -t eu.gcr.io/$PROJECT/ko-builder
+  Successfully built ...
+  Successfully tagged eu.gcr.io/$PROJECT/ko-builder:latest
+  $ docker push eu.gcr.io/$PROJECT/ko-builder
+
+  ```
+
+- Edit the manifest `ko-builder.yaml` to change the value of the `REPOSITORY` environment variable with the repository you want to build from and the `image` path with your own repository.
 
   In this directory, the `/config/` directory must contain manifests of Kubernetes resources, including Deployment resources with an `image` field compatible with [ko](https://github.com/google/ko).
 
@@ -37,7 +47,7 @@ An image to build go programs and deploy them in Kubernetes
   Updated IAM policy for project [$PROJECT].
   ```
 
-- Create a Kubernetes secret with the key.json contents:
+- Create a Kubernetes secret named `gcloud` with the key.json contents:
 
   ```sh
   $ kubectl create secret generic gcloud \
@@ -59,14 +69,18 @@ An image to build go programs and deploy them in Kubernetes
   configmap/config created
   ```
 
-- Create a Kubernetes service account with credentials to create the resources specified in the `/config/` directory of your repository:
+- Create a Kubernetes service account with credentials to create the resources specified in the `/config/` directory of your repository, for example:
 
   ```sh
   $ kubectl create sa ko-builder
   serviceaccount/ko-builder created
 
-  $ kubectl create clusterrolebinding ko-builder-role \
-     --clusterrole=cluster-admin \
+  $ kubectl create clusterrole ko-builder-role \
+   --verb=list,get,create \
+   --resource=deployments.apps,services,namespaces,serviceaccounts
+
+  $ kubectl create clusterrolebinding ko-builder-rolebinding \
+     --clusterrole=ko-builder-role \
      --serviceaccount=default:ko-builder
   clusterrolebinding.rbac.authorization.k8s.io/ko-builder-role created
   ```
