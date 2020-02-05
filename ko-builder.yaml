@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ko-builder
+spec:
+  template:
+    spec:
+      serviceAccount: ko-builder
+      restartPolicy: Never
+      containers:
+      - name: ko-builder
+        image: eu.gcr.io/ko-demo/ko-builder
+        imagePullPolicy: Always
+        env:
+        - name: REPOSITORY
+          value: github.com/n3wscott/kopond
+        envFrom:
+        - configMapRef:
+            name: config
+        volumeMounts:
+        - mountPath: /etc/gcloud
+          name: gcloud
+          readOnly: true
+      volumes:
+      - name: gcloud
+        secret:
+          secretName: gcloud
