@@ -9,8 +9,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: ko-builder
-        image: feloy/ko-builder
-        imagePullPolicy: Always
+        image: feloy/ko-builder:release-1.0.0
         env:
         - name: REPOSITORY
           value: github.com/feloy/kopond
