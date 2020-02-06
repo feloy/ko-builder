@@ -4,25 +4,13 @@ An image to build go programs and deploy them in Kubernetes
 
 ## On Google Cloud GKE
 
+### Prepare the cluster
+
 - define the `PROJECT` variable with the name of your Google Cloud project:
 
   ```sh
   $ PROJECT=my-project
   ```
-
-- Build the Docker image and push it to the registry of your project:
-
-  ```sh
-  $ docker build . -t eu.gcr.io/$PROJECT/ko-builder
-  Successfully built ...
-  Successfully tagged eu.gcr.io/$PROJECT/ko-builder:latest
-  $ docker push eu.gcr.io/$PROJECT/ko-builder
-
-  ```
-
-- Edit the manifest `ko-builder.yaml` to change the value of the `REPOSITORY` environment variable with the repository you want to build from and the `image` path with your own repository.
-
-  In this directory, the `/config/` directory must contain manifests of Kubernetes resources, including Deployment resources with an `image` field compatible with [ko](https://github.com/google/ko).
 
 - Create a Google Cloud service account with access to the registry of the project and get a JSON key for this service account, for example:
 
@@ -69,7 +57,7 @@ An image to build go programs and deploy them in Kubernetes
   configmap/config created
   ```
 
-- Create a Kubernetes service account with credentials to create the resources specified in the `/config/` directory of your repository, for example:
+- Create a Kubernetes service account with credentials to create the resources specified in your repository, for example:
 
   ```sh
   $ kubectl create sa ko-builder
@@ -84,6 +72,13 @@ An image to build go programs and deploy them in Kubernetes
      --serviceaccount=default:ko-builder
   clusterrolebinding.rbac.authorization.k8s.io/ko-builder-role created
   ```
+
+### For each program you want to build and deploy
+
+- Edit the manifest `ko-builder.yaml` to change:
+
+  - the value of the `REPOSITORY` environment variable with the repository from which you want to get sources to build,
+  - the value of `CONFIG_VALUE` with the path into the repository containing manifests of Kubernetes resources, including Deployment resources with an `image` field compatible with [ko](https://github.com/google/ko).
 
 - Start the builder:
 
@@ -129,3 +124,14 @@ An image to build go programs and deploy them in Kubernetes
   $ kubectl get svc echo-service
   Error from server (NotFound): services "echo-service" not found
   ```
+
+### Generating your own ko-builder image
+
+Build the Docker image and push it to your own registry:
+
+```sh
+$ docker build . -t eu.gcr.io/$PROJECT/ko-builder
+Successfully built ...
+Successfully tagged eu.gcr.io/$PROJECT/ko-builder:latest
+$ docker push eu.gcr.io/$PROJECT/ko-builder
+```

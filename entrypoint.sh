@@ -4,7 +4,7 @@ gcloud auth activate-service-account ${SERVICE_ACCOUNT} --key-file=/etc/gcloud/k
 echo y | gcloud auth configure-docker
 
 go get ${REPOSITORY}
-cd /go/src/${REPOSITORY}/config/
+cd /go/src/${REPOSITORY}${CONFIG_PATH}
 
 POD_UID=$(cat /pod/uid)
 POD_NAME=$(cat /pod/name)

@@ -9,11 +9,13 @@ spec:
       restartPolicy: Never
       containers:
       - name: ko-builder
-        image: eu.gcr.io/ko-demo/ko-builder
+        image: feloy/ko-builder
         imagePullPolicy: Always
         env:
         - name: REPOSITORY
-          value: github.com/n3wscott/kopond
+          value: github.com/feloy/kopond
+        - name: CONFIG_PATH
+          value: /config
         envFrom:
         - configMapRef:
             name: config
