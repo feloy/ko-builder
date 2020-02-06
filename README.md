@@ -76,7 +76,7 @@ An image to build go programs and deploy them in Kubernetes
   serviceaccount/ko-builder created
 
   $ kubectl create clusterrole ko-builder-role \
-   --verb=list,get,create \
+   --verb=list,get,create,patch \
    --resource=deployments.apps,services,namespaces,serviceaccounts
 
   $ kubectl create clusterrolebinding ko-builder-rolebinding \
@@ -90,4 +90,42 @@ An image to build go programs and deploy them in Kubernetes
   ```sh
   $ kubectl apply -f ko-builder.yaml
   job.batch/ko-builder created
+  ```
+
+- Wait for the job completion:
+
+  ```sh
+  $ kubectl get jobs ko-builder -w
+  job.batch/ko-builder created
+  NAME         COMPLETIONS   DURATION   AGE
+  ko-builder   0/1           0s         3s
+  ko-builder   1/1           16s        16s
+  ```
+
+
+- Verify that the resources were created:
+
+  > you can use [kubectl tree plugin](https://github.com/ahmetb/kubectl-tree) and see that the resources created are "owned" by the pod created by the `ko-builder` job.
+
+  ```sh
+  $ kubectl tree jobs ko-builder
+  NAMESPACE  NAME                                          READY  REASON        AGE
+  default    Job/ko-builder                                -                    44s
+  default    └─Pod/ko-builder-x4cgs                        False  PodCompleted  44s
+  default      ├─Deployment/echo-controller                -                    18s
+  default      │ └─ReplicaSet/echo-controller-5f4bb6868f   -                    18s
+  default      │   └─Pod/echo-controller-5f4bb6868f-fj5zk  True                 18s
+  default      └─Service/echo-service                      -                    18s
+  ```
+
+- Thanks to these owner references, the created objects will be deleted when you delete the parent job `ko-builder`:
+
+  ```sh
+  $ kubectl delete jobs ko-builder
+  job.batch "ko-builder" deleted
+  # After several seconds
+  $ kubectl get deployment echo-controller
+  Error from server (NotFound): deployments.extensions "echo-controller" not found
+  $ kubectl get svc echo-service
+  Error from server (NotFound): services "echo-service" not found
   ```
