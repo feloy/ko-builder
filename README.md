@@ -78,7 +78,8 @@ An image to build go programs and deploy them in Kubernetes
 - Edit the manifest `ko-builder.yaml` to change:
 
   - the value of the `REPOSITORY` environment variable with the repository from which you want to get sources to build,
-  - the value of `CONFIG_VALUE` with the path into the repository containing manifests of Kubernetes resources, including Deployment resources with an `image` field compatible with [ko](https://github.com/google/ko).
+  - the value of `CHECKOUT` with the branch / commit to checkout (`master` if you are not sure),
+  - the value of `CONFIG_PATH` with the path into the repository containing manifests of Kubernetes resources, including Deployment resources with an `image` field compatible with [ko](https://github.com/google/ko).
 
 - Start the builder:
 
@@ -96,7 +97,6 @@ An image to build go programs and deploy them in Kubernetes
   ko-builder   0/1           0s         3s
   ko-builder   1/1           16s        16s
   ```
-
 
 - Verify that the resources were created:
 

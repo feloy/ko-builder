@@ -13,6 +13,8 @@ spec:
         env:
         - name: REPOSITORY
           value: github.com/feloy/kopond
+        - name: CHECKOUT
+          value: master
         - name: CONFIG_PATH
           value: /config
         envFrom:
