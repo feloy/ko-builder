@@ -17,7 +17,7 @@ kubectl patch -p "
 metadata:
   ownerReferences:
   - apiVersion: core
-    controller: true
+    controller: false
     blockOwnerDeletion: true
     kind: Pod
     name: ${POD_NAME}
