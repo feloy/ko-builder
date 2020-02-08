@@ -9,17 +9,23 @@ git checkout ${CHECKOUT}
 
 KO_DOCKER_REPO=${REGISTRY} ko apply -f .
 
-POD_UID=$(cat /pod/uid)
 POD_NAME=$(cat /pod/name)
+POD_UID=$(cat /pod/uid)
+
+OWNER_APIVERSION=${OWNER_APIVERSION:-core}
+OWNER_CONTROLLER=${OWNER_CONTROLLER:-false}
+OWNER_KIND=${OWNER_KIND:-Pod}
+OWNER_NAME=${OWNER_NAME:-${POD_NAME}}
+OWNER_UID=${OWNER_UID:-${POD_UID}}
 
 # Add ownerReferences to all resources
 kubectl patch -p "
 metadata:
   ownerReferences:
-  - apiVersion: core
-    controller: false
+  - apiVersion: ${OWNER_APIVERSION}
+    controller: ${OWNER_CONTROLLER}
     blockOwnerDeletion: true
-    kind: Pod
-    name: ${POD_NAME}
-    uid: ${POD_UID}
+    kind: ${OWNER_KIND}
+    name: ${OWNER_NAME}
+    uid: ${OWNER_UID}
 " -f .
