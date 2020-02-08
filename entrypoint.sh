@@ -21,5 +21,4 @@ metadata:
     blockOwnerDeletion: true
     kind: Pod
     name: ${POD_NAME}
-    uid: ${POD_UID}
 " -f .
