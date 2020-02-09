@@ -135,3 +135,15 @@ Successfully built ...
 Successfully tagged eu.gcr.io/$PROJECT/ko-builder:latest
 $ docker push eu.gcr.io/$PROJECT/ko-builder
 ```
+
+### Defining an owner
+
+By default, the Pod deploying the resources will be the owner of the deployed resources.
+
+You can define the following environment variables for the Job to indicate the owner (useful if you want to make execute this task by an operator):
+
+- `OWNER_APIVERSION`: the apiVersion of the owner,
+- `OWNER_CONTROLLER`: `true` if the owner is a controller, `false` otherwise,
+- `OWNER_KIND`: the kind of the owner (`kind`),
+- `OWNER_NAME`: the name of the owner (`metadata.name`),
+- `OWNER_UID`: the uid of the owner (`metadata.uid`).
