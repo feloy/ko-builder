@@ -1,6 +1,6 @@
 # ko-builder
 
-An image to build go programs and deploy them in Kubernetes
+An image to build go programs and deploy them in Kubernetes using [ko](https://github.com/google/ko).
 
 ## On Google Cloud GKE
 
@@ -136,14 +136,18 @@ Successfully tagged eu.gcr.io/$PROJECT/ko-builder:latest
 $ docker push eu.gcr.io/$PROJECT/ko-builder
 ```
 
-### Defining an owner
+### Defining another owner
 
 By default, the Pod deploying the resources will be the owner of the deployed resources.
 
-You can define the following environment variables for the Job to indicate the owner (useful if you want to make execute this task by an operator):
+You can use the following environment variables for the Job to indicate the owner (useful if you want to make execute this task by an operator):
 
 - `OWNER_APIVERSION`: the apiVersion of the owner,
 - `OWNER_CONTROLLER`: `true` if the owner is a controller, `false` otherwise,
 - `OWNER_KIND`: the kind of the owner (`kind`),
 - `OWNER_NAME`: the name of the owner (`metadata.name`),
 - `OWNER_UID`: the uid of the owner (`metadata.uid`).
+
+### See also
+
+See also the [ko-operator](https://github.com/feloy/ko-operator), a Kubernetes operator taking advantage of this image.
